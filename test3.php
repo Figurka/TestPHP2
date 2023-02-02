@@ -24,3 +24,42 @@
 
 # Использовать данные:
 # любые
+ interface Transporter{
+    public function transitCost();
+ }
+
+ class DHL implements Transporter{
+    public function transitCost(int $weight =-1,...$args)
+    {
+        if ($weight == -1){
+            return 'Не возможно расчитать стоимость, проверьте параметры доставки';
+        }
+        return $weight*100;
+    }
+ }
+ class RussianPost implements Transporter{
+    public function transitCost(int $weight = -1,...$args)
+    {
+        if ($weight == -1){
+            return 'Не возможно расчитать стоимость, проверьте параметры доставки';
+        }
+        return $weight>10?1000:100;  
+    }
+ }
+
+ class RandomTranporter implements Transporter{
+    public function transitCost(int $distance = -1,...$args)
+    {   
+        if ($distance == -1){
+            return 'Не возможно расчитать стоимость, проверьте параметры доставки';
+        }
+        return $distance * 10;
+    }
+ }
+
+
+$trList = [ new DHL(), new RussianPost(), new RandomTranporter()];
+foreach ($trList as $transporter ){
+    echo 'Стоимость доставки у '. get_class($transporter) .': '.
+         $transporter->transitCost(weight :20, distance : 3, randomString:'Хрупкое') .'<br/>';
+}
