@@ -78,3 +78,33 @@ $workers = array (
 				'area_name' => 'Центр', //14
 		),
 );
+
+
+function checkArea($area){
+	global $workers;
+	foreach($workers as $worker){
+		if ($area===$worker['area_name']){
+			return $worker['login'];
+		}
+	}
+}
+function findWorker(string $area){
+	global $areas,$nearby;
+	if (in_array($area, $areas,true)){
+		$Workers[] = checkArea($area);
+		foreach($nearby[array_search($area,$areas)] as $nearId){
+			$Workers[]= checkArea($areas[$nearId]);
+		}
+		return $Workers; 
+	}
+	return null;
+}
+
+
+$res = findWorker('Центр');
+echo 'Доступные работники: <br/>';
+for ($i=0; $i<count($res); $i++ ){
+	if ($res[$i]){
+		echo $res[$i] .'<br/>';
+	}
+}
