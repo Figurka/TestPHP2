@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Олимпиада</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+</head>
+<body>
+    <header class="p-3 text-bg-dark">
+        <div class="container">
+          <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+            <a href="https://github.com/Figurka/TestPHP" class=" d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-house" viewBox="0 0 16 16">
+                    <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.707 1.5ZM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5 5 5Z"/>
+                    <use xlink:href="#"></use>
+                </svg>
+            </a>
+        </div>
+        </div>
+      </header>
+    <main>
+        <section class="container text-center">
+            <h1>Олимпиада</h1>
+            <p>
+                <label for="">Участники</label>
+                <input type="text" id="input-name" onkeyup="validateInput( this );" class="col-md-4" placeholder="Введите имена участников через запятую">
+                <a href="#" onclick="addUser()" class="btn btn-outline-success">Добавить</a>
+            </p>
+        </section>
+        <section id="tabSec" class="container"style="display: none">
+            <table class="table table-success table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th class="" onclick="sortColumn('id')">ID</th>
+                        <th class="" onclick="sortColumn('name')">Имя</th>
+                        <th class="" onclick="sortColumn('score')">Очки</th>
+                    </tr>
+                </thead>
+                <tbody id ='user-item'>
+                </tbody>
+            </table>
+        </section>
+    </main>
+    <div class="modal fade" id="mModal"   tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="staticBackdropLabel">Недопустимый ввод</h1>
+            </div>
+            <div class="modal-body">
+              Допускаются только символы кириллицы и знак запятой.
+            </div>
+            <div class="modal-footer">
+              <button type="button" onclick="modal.hide()" class="btn btn-success">ОК</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    <script>
+        document.getElementById('input-name').addEventListener("keydown",(function(e) {
+                if(e.which == 13) {
+                    addUser();
+                }
+            }));
+
+        let modal =new bootstrap.Modal( document.getElementById('mModal'));
+        function validateInput(obj){
+           let exp = /[^а-яА-ЯёЁ, ]/ig;
+           if (exp.test(obj.value)) {
+                modal.show();
+                obj.value = obj.value.replace(exp,'');
+           }else {
+                    modal.hide();
+                }
+        }
+        var userList =[];
+
+        async function addUser(){
+            let user={
+                id:'',
+                name:'',
+                score: ''
+            };
+            let inputName = document.getElementById('input-name');
+            if (inputName.value!==""){
+                inputName.value = inputName.value.replaceAll(' ','')// Убираем пробелы между именами(Да, их можно запретить изначально, но с ними удобнее писать имена)
+                let names = inputName.value.split(',');
+                document.getElementById('tabSec').setAttribute("style","display: block")
+                inputName.value = ''
+                users=[];
+                for (name of names){
+                    user.id = userList.length+1;
+                    user.name = name;
+                    await sendReq().then((data)=>{user.score = data;});
+                    userList.push(Object.assign({},user))
+                };
+                tabPrint();
+            }
+        };
+        function sendReq(){
+            return new Promise((res,rej)=>{
+            let xhttp = new XMLHttpRequest();
+            xhttp.open("GET",'score.php',true)
+            xhttp.onload = () => res(xhttp.responseText);
+            xhttp.onerror = () => rej(xhttp.statusText);
+            xhttp.send();
+        })}
+        function tabPrint(){
+            let userTab =document.getElementById('user-item')
+            userTab.innerHTML=''
+            for (user of userList){
+                let tr= document.createElement('tr')
+                tr.innerHTML ="<td >"+user.id+"</td><td>"+user.name+"</td><td>"+user.score+"</td>"
+                userTab.appendChild(tr)
+            }
+        };
+        function sortColumn(col){
+            userList.sort((a,b)=>a[col]>b[col] ? 1:-1)
+            tabPrint()
+        };
+
+    </script>
+</body>
+</html>

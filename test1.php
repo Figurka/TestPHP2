@@ -80,6 +80,13 @@ $workers = array (
 );
 
 
+/**
+ * Мой код
+ * 
+ * Усложнение влияет на вывод функции. 
+ * Я вывожу все в список, null в списке - работник не найден. null вместо списка - если введен не правильный район.
+ * 
+ */
 function checkArea($area){
 	global $workers;
 	foreach($workers as $worker){
@@ -101,8 +108,10 @@ function findWorker(string $area){
 }
 
 
-$res = findWorker('Центр');
-echo 'Доступные работники: <br/>';
+
+$area = 'Древлянка';
+$res = findWorker($area);
+echo "Доступные работники в {$area}: <br/>";
 for ($i=0; $i<count($res); $i++ ){
 	if ($res[$i]){
 		echo $res[$i] .'<br/>';

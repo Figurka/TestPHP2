@@ -1,0 +1,18 @@
+/* Выведите одного случайного пользователя из таблицы shop.users, старше 30 лет, сделавшего минимум 3 заказа за последние полгода */
+USE shop;
+/*
+ *
+ *  ИТОГОВЫЙ ЗАПРОС
+ *
+ */
+SELECT u.name 
+ FROM users AS u 
+ JOIN orders AS o 
+ ON (o.user_id = u.id) 
+ WHERE ( TIMESTAMPDIFF( YEAR, u.birthday_at, CURDATE() ) ) > 30 AND
+      ( o.created_at > NOW() - INTERVAL 183 DAY )
+ GROUP BY u.name 
+ HAVING COUNT(o.id) >= 3 
+ ORDER BY RAND() 
+ LIMIT 1
+
