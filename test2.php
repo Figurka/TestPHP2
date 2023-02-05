@@ -75,6 +75,19 @@ function checkInterval(string $interval){
 		list($intBeg,$intEnd)=convertToTime($interval);
 		foreach($list as $item){
 			list($itemB,$itemE)=convertToTime($item);
+			//  Отредачить После Веб Версии 
+			if ((($itemB<$ItemE && $intBeg <$intEnd) && !($ItemE <=$intBeg || $intEnd <= $itemB))
+					||
+					(((($itemB<$ItemE) && ($intBeg > $intEnd)) || (($itemB>$ItemE) && ($intBeg<$intEnd))) && !($itemE<=$intBeg && $intEnd<=$itemB))
+					||
+					($intEnd<intBeg && $itemE<$itemB)){
+				return false;
+			}
+
+			//
+
+
+/*
 			if (($intBeg<$intEnd)&&($itemB<$itemE)){		// Без перехода на след. сутки
 				if((($intBeg>=$itemB)&&($intBeg<$itemE))||(($intEnd>$itemB)&&($intEnd<=$itemE))){
 					return false;							// Наложение
@@ -94,7 +107,7 @@ function checkInterval(string $interval){
 				if((($intBeg>=$itemB)&&($intBeg<($itemE+86400)))||(($intEnd>$itemB)&&($intEnd<=($itemE+86400)))){
 					return false;							// Наложение
 				}
-			}
+			}*/
 		}
 		return true;
 	}
