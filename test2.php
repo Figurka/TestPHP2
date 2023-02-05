@@ -75,39 +75,14 @@ function checkInterval(string $interval){
 		list($intBeg,$intEnd)=convertToTime($interval);
 		foreach($list as $item){
 			list($itemB,$itemE)=convertToTime($item);
-			//  Отредачить После Веб Версии 
-			if ((($itemB<$ItemE && $intBeg <$intEnd) && !($ItemE <=$intBeg || $intEnd <= $itemB))
+			if ((($itemB<$itemE && $intBeg <$intEnd) && !($itemE <=$intBeg || $intEnd <= $itemB))
 					||
-					(((($itemB<$ItemE) && ($intBeg > $intEnd)) || (($itemB>$ItemE) && ($intBeg<$intEnd))) && !($itemE<=$intBeg && $intEnd<=$itemB))
+					(((($itemB<$itemE) && ($intBeg > $intEnd)) || (($itemB>$itemE) && ($intBeg<$intEnd))) && !($itemE<=$intBeg && $intEnd<=$itemB))
 					||
-					($intEnd<intBeg && $itemE<$itemB)){
+					($intEnd<$intBeg && $itemE<$itemB)){
 				return false;
 			}
 
-			//
-
-
-/*
-			if (($intBeg<$intEnd)&&($itemB<$itemE)){		// Без перехода на след. сутки
-				if((($intBeg>=$itemB)&&($intBeg<$itemE))||(($intEnd>$itemB)&&($intEnd<=$itemE))){
-					return false;							// Наложение
-				}
-			}elseif(($intBeg>$intEnd)&&($itemB>$itemE)){	// Переход на след. сутки в обоих интервалах
-				if((($intBeg>=$itemB)&&($intBeg<($itemE+86400)))||((($intEnd+86400)>$itemB)&&(($intEnd+86400)<=($itemE+86400)))){
-					return false;							// Наложение
-				}
-			}elseif($intBeg>$intEnd) 						// Переход на след. сутки в проверяемом интервале
-			{
-				if((($intBeg>=$itemB)&&($intBeg<$itemE))||((($intEnd+86400)>$itemB)&&(($intEnd+86400)<=$itemE))){
-					return false;							// Наложение
-				}
-
-			}else{					
-				var_dump(($intEnd<=($itemE+86400)));						// Переход на след. сутки в списке
-				if((($intBeg>=$itemB)&&($intBeg<($itemE+86400)))||(($intEnd>$itemB)&&($intEnd<=($itemE+86400)))){
-					return false;							// Наложение
-				}
-			}*/
 		}
 		return true;
 	}
@@ -117,10 +92,12 @@ function checkInterval(string $interval){
 
 
 $listForCheck= array(
-	'23:00-00:00',
+	'22:00-00:00',
 	'23:00-01:00',
 	'00:30-03:00',
-	// '14:30-15:00'
+	'14:30-15:00',
+	'02:30-04:00',
+	'01:00-02:40'
 );
 
 foreach($listForCheck as $item){
@@ -133,4 +110,3 @@ foreach($listForCheck as $item){
 	
 }
 
-var_dump($list);
