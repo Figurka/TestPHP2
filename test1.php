@@ -84,7 +84,14 @@ $workers = array (
  * Мой код
  * 
  * Усложнение влияет на вывод функции. 
- * Я вывожу все в список, null в списке - работник не найден. null вместо списка - если введен не правильный район.
+ * 
+ * 
+ * Функция всегда выводит список сотрудников, даже если найден работник в этом районе - так я понял усложнение про список.
+ * Это можно изменить добавив лишь одно условие. 
+ * Если же сотрудник в районе не найден. идет поиск по соседним и выводится список найденных в этих районах сотрудников.
+ * Если же и в соседних районах нет работников, то поиск ведется по соседям второй очереди.  
+ * 
+ * 
  * 
  */
 function checkArea($area){
@@ -94,26 +101,40 @@ function checkArea($area){
 			return $worker['login'];
 		}
 	}
+	return false;
 }
 function findWorker(string $area){
 	global $areas,$nearby;
 	if (in_array($area, $areas,true)){
 		$Workers[] = checkArea($area);
-		foreach($nearby[array_search($area,$areas)] as $nearId){
+		$nearAreas=$nearby[array_search($area,$areas)];
+		foreach($nearAreas as $nearId){
 			$Workers[]= checkArea($areas[$nearId]);
 		}
-		return $Workers; 
+		if (in_array(!false,$Workers)){
+			return $Workers;
+		}
+		foreach($nearAreas as $nearId){
+			foreach($nearby[$nearId] as $farID){
+				$Workers[]= checkArea($areas[$farID]);
+			}
+		}
+		return  array_unique($Workers);
 	}
 	return null;
 }
 
-
-
-$area = 'Древлянка';
-$res = findWorker($area);
-echo "Доступные работники в {$area}: <br/>";
-for ($i=0; $i<count($res); $i++ ){
-	if ($res[$i]){
-		echo $res[$i] .'<br/>';
+foreach($areas as $area){
+	$res = findWorker($area);
+	echo "Доступные работники в {$area}: &emsp;";
+	foreach ($res as $item ){
+		if ($item){
+			echo $item ."&emsp;";
+		}
 	}
+	echo '<br/>';
+	echo '<br/>';
 }
+
+
+?>
