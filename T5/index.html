@@ -80,9 +80,9 @@
 
         async function addUser(){
             let user={
-                id:'',
+                id:0,
                 name:'',
-                score: ''
+                score: 0
             };
             let inputName = document.getElementById('input-name');
             if (inputName.value!==""){
@@ -92,10 +92,12 @@
                 inputName.value = ''
                 users=[];
                 for (name of names){
-                    user.id = userList.length+1;
-                    user.name = name;
-                    await sendReq().then((data)=>{user.score = data;});
-                    userList.push(Object.assign({},user))
+                    if(name!== ''){                                                 //Добавлена проверка для исключения пустых строк
+                        user.id = userList.length+1;
+                        user.name = name;
+                        await sendReq().then((data)=>{user.score = Number(data);}); // Исправлено преобразование типов, для очков
+                        userList.push(Object.assign({},user))
+                    }
                 };
                 tabPrint();
             }
